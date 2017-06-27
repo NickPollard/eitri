@@ -1,0 +1,47 @@
+name:                newlang
+version:             0.1.0.0
+synopsis:            New Language
+description:         New Language that compiles to C++
+homepage:            https://github.com/nickpollard/newlang#readme
+license:             BSD3
+license-file:        LICENSE
+author:              Nick Pollard
+maintainer:          nickedwardpollard@gmail.com
+copyright:           2017 Nick Pollard
+category:            Lang
+build-type:          Simple
+extra-source-files:  README.md
+cabal-version:       >=1.10
+
+library
+  hs-source-dirs:      src
+  ghc-options:         -Wall
+  exposed-modules:     Newlang.Parser,
+                       Newlang.AST
+  build-depends:       base >= 4.7 && < 5,
+                       parsec,
+                       mtl,
+                       text,
+                       extra,
+                       containers,
+                       bytestring,
+                       cereal,
+                       either,
+                       lens,
+                       memory,
+                       optparse-applicative,
+                       stm,
+                       vector
+  default-language:    Haskell2010
+
+executable newlang-exe
+  hs-source-dirs:      app
+  main-is:             Main.hs
+  ghc-options:         -Wall -threaded -rtsopts -with-rtsopts=-N
+  build-depends:       base
+                     , newlang
+  default-language:    Haskell2010
+
+source-repository head
+  type:     git
+  location: https://github.com/githubuser/newlang
