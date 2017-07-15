@@ -17,9 +17,11 @@ library
   hs-source-dirs:      src
   ghc-options:         -Wall
   exposed-modules:     Newlang.Parser,
-                       Newlang.AST
+                       Newlang.AST,
+                       Newlang.Tokeniser
   build-depends:       base >= 4.7 && < 5,
                        parsec,
+                       megaparsec,
                        mtl,
                        text,
                        extra,
@@ -30,6 +32,7 @@ library
                        lens,
                        memory,
                        optparse-applicative,
+                       srcloc,
                        stm,
                        vector
   default-language:    Haskell2010

@@ -1,15 +1,34 @@
 module Newlang.Parser (
-  tokenise
 ) where
 
+import Data.Loc (L(..))
 import Data.Text (Text, pack)
 import Text.Parsec
---import Text.Parsec.Char
-import Text.Parsec.Text
 
-{-
+import Newlang.AST
+import Newlang.Tokeniser (Token)
+import qualified Newlang.Tokeniser as T
+
+type Parser = Parsec [L Token] ()
+
 
 -- assignment: val name = expr
+--assign      = Assign     <$> name <* string "=" <*> expr
+
+--expr :: Parser Expr
+--expr = --applyFn | valueOf
+      --ValueOf <$> name
+
+--name :: Parser Name
+--name = parseToken match
+  --where match (Name t) = Just t
+        --match _        = Nothing
+
+--parseToken :: (L Token -> Maybe a) -> Parser a
+--parseToken = token show loc
+
+
+{-
 
 (~~>) :: Functor f => f a -> (a -> b) -> f b
 (~~>) = flip fmap
@@ -46,59 +65,4 @@ instance (Parsable a, Parsable b) => Parsable (a :> b) where
 initialize :: Parser Statement
 initialize = VarDef ~: varDef ~ "=" ~ expr
 
-expr :: Parser Expression
-expr = applyFn | valueOf
-
-name :: Parser Name
-name = undefined
-
 -}
-
-----
-
-data Token = Name Text
-           | ReservedWord Text
-           | Symbol Text
-           deriving Show
-
-{-
-instance Show Token where
-  show _ = ""
-  -}
-
-reservedWords = "def"
-         : "return"
-         : "if"
-         : "then"
-         : "else"
-         : "case"
-         : []
-
-symbol' = "("
-       : ")"
-       : "["
-       : "]"
-       : "}"
-       : "{"
-       : ":"
-       : "="
-       : []
-
-txt :: String -> Parser Text
-txt x = pack <$> string x
-
-name' = pack <$> many1 alphaNum
-symbols = choice $ txt <$> symbol'
-reserved = choice $ txt <$> reservedWords
-
--- TODO - handle whitespace
-
-withSpaces = flip endBy spaces
-
-tokeniser :: Parser [Token]
-tokeniser = withSpaces $ ReservedWord <$> reserved
-                     <|> Symbol <$> symbols
-                     <|> Name <$> name'
-
-tokenise :: Text -> Either ParseError [Token]
-tokenise = parse (tokeniser <* eof) ""
