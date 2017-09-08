@@ -69,15 +69,3 @@ data Statement = Assign VarName Expr
 type (:-) a b = (a,b)
 
 type ArgDefs = [VarName :- Type]
-
-{-
-  We would like to parse some simple function definitions:
-
-  def foo() = 2
-
-  def id(a) = a
-
-  def bar() =
-    val a = 2
-    foo(2)
-   -}

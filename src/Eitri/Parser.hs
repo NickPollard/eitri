@@ -3,11 +3,13 @@ module Eitri.Parser (
 ) where
 
 import Control.Applicative (many, (<|>), liftA2)
+import Control.Monad (void)
 import Data.List.NonEmpty
 import Data.Loc (L(..))
 import Data.Set (Set)
 import qualified Data.Set as Set
 import Data.Text (Text)
+import Text.Megaparsec.Combinator (sepBy)
 import Text.Megaparsec.Error
 import Text.Megaparsec.Prim
 
@@ -29,8 +31,11 @@ varDef = var <|> val
 statement :: MonadParser m => m Statement
 statement =   try (Assign <$> name <* symbol "=" <*> expr)
           <|> Initialize <$> varDef <* symbol "=" <*> expr
-          <|> FunDef <$> (reserved "def" *> name) <*> parens (many argDef) <* symbol "=" <*> block
+          <|> FunDef <$> (reserved "def" *> name) <*> parens (argDef `sepBy` comma) <* symbol "=" <*> block
           <|> Eval <$> expr
+
+comma :: MonadParser m => m ()
+comma = void $ symbol ","
 
 braces :: MonadParser m => m a -> m a
 braces p = symbol "{" *> p <* symbol "}"

@@ -32,7 +32,6 @@ instance Show Tok where
   show (Symbol t) = unpack t
   show (Literal l) = show l
 
-
 newtype TokenStream = TokenStream [L Tok] deriving Show
 
 instance Stream TokenStream where
@@ -68,6 +67,7 @@ symbol' = "("
         : "]"
         : "}"
         : "{"
+        : ","
         : ":"
         : "="
         : []
