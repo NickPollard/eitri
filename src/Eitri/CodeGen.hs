@@ -30,7 +30,7 @@ intercalate sep ts = Cpp $ Text.intercalate (unCpp sep) (unCpp <$> ts)
 
 instance GenCpp Statement where
   genCpp (Assign var expr) = genCpp var <> " = " <>  genCpp expr <> ";"
-  genCpp (Initialize _ _) = undefined -- TODO -- genCpp var <> " = " <>  genCpp expr <> ";"
+  genCpp (Initialize var expr) = genCpp var <> " = " <>  genCpp expr <> ";"
   genCpp (Eval expr) = genCpp expr <> ";"
   genCpp (Block b) = genBlock b
   genCpp (FunDef name args block) = auto <> genCpp name <> "(" <> genArgs args <> ")" <> " = " <> genBlock block
@@ -42,7 +42,15 @@ genArgs :: [VarName :- Type] -> Cpp
 genArgs args = intercalate ", " $ genArg <$> args
  where genArg (arg, typ) = genCpp typ <> " " <> genCpp arg
 
+instance GenCpp SomeVarDef where
+  genCpp (SomeVarDef (Var n t)) = genCpp t <> " " <> genCpp n
+  genCpp (SomeVarDef (Val n t)) = const' $ genCpp t <> " " <> genCpp n
+
+const' :: Cpp -> Cpp
+const' c = "const " <> c
+
 instance GenCpp Expr where
+  genCpp (Apply name []) = genCpp name
   genCpp (Apply name args) = genCpp name <> "(" <> intercalate ", " (genCpp <$> args) <> ")"
   genCpp (ValueOf name) = genCpp name
   genCpp (LiteralVal lit) = genCpp lit
@@ -52,9 +60,14 @@ instance GenCpp Lit where
   genCpp (LitInt i) = Cpp $ showT i
   genCpp (LitDouble i) = Cpp $ showT i
 
-
 instance GenCpp Name where
   genCpp (Name nm) = Cpp nm
+
+instance GenCpp Type where
+  genCpp (Type (Name "Int"))    = "int"
+  genCpp (Type (Name "Double")) = "double"
+  genCpp (Type (Name "Float"))  = "float"
+  genCpp (Type nm) = genCpp nm
 
 auto :: Cpp
 auto = Cpp "auto "

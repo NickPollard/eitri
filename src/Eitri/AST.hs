@@ -26,7 +26,7 @@ type Block = [Statement]
 type VarName = Name
 type FnName = Name
 
-type Type = Name
+newtype Type = Type Name deriving (Show)
 
 {-
 data Type = String

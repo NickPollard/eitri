@@ -20,7 +20,7 @@ import qualified Eitri.Tokeniser as Tok
 type MonadParser m = MonadParsec Dec TokenStream m
 
 type' :: MonadParser m => m Type
-type' = name
+type' = Type <$> name
 
 varDef :: MonadParser m => m SomeVarDef
 varDef = var <|> val
@@ -50,9 +50,13 @@ block :: MonadParser m => m [Statement]
 block = braces $ many statement
 
 expr :: MonadParser m => m Expr
-expr =   Apply <$> name <*> many expr
+expr =   Apply <$> name <*> many (trivialExpr <|> parens expr)
      <|> ValueOf <$> name
      <|> LiteralVal <$> literal
+
+trivialExpr :: MonadParser m => m Expr
+trivialExpr = ValueOf <$> name
+              <|> LiteralVal <$> literal
 
 name :: MonadParser m => m Name
 name = token test Nothing
