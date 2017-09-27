@@ -7,11 +7,12 @@ import Data.List ( intercalate )
 import Data.List.NonEmpty ( NonEmpty(..) )
 import Data.Monoid ((<>))
 import qualified Data.Set as Set
-import Data.Text ( Text, unpack )
+import Data.Text ( Text, unpack, pack )
 
 import Text.Megaparsec ( parse, Dec, Token, ParseError(..), SourcePos(..), unPos, Pos, showErrorComponent )
 
 import Eitri.AST ( Statement )
+import Eitri.CodeGen ( genCpp )
 import Eitri.Parser ( statement )
 import Eitri.Tokeniser ( tokenise, TokenStream )
 
@@ -34,3 +35,6 @@ formatParseError src (ParseError ((SourcePos _ (pToI -> line) (pToI -> col)) :| 
     where srcLine i = lines (unpack src) !! (i - 1) -- line counts are 1-based, list is 0-based
           caret i = replicate (i-1) ' ' ++ "^" -- col counts are 1-based, sub 1 for the caret
           showUnexpected = intercalate ", " $ showErrorComponent <$> Set.toList unexpected
+
+compileCpp :: String -> String
+compileCpp = either id (show . genCpp) . compile . pack

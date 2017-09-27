@@ -47,7 +47,8 @@ argDef :: MonadParser m => m (VarName, Type)
 argDef = (name <* symbol ":") `tuple` type'
 
 block :: MonadParser m => m [Statement]
-block = braces $ many statement
+block =   (braces $ many statement)
+      <|> (return <$> statement)
 
 expr :: MonadParser m => m Expr
 expr =   Apply <$> name <*> many (trivialExpr <|> parens expr)

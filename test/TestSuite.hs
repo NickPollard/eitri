@@ -15,7 +15,9 @@ main = defaultMain $
                                                  ("hello world",
                                                     helloWorld),
                                                  ("multiline",
-                                                    multiLine)]
+                                                    multiLine),
+                                                 ("square",
+                                                    square)]
 
 data TestResult = Success
                 | ErrMsg String
@@ -26,7 +28,7 @@ instance Show TestResult where
   show (ErrMsg s) = s
 
 tcase :: String -> Text -> TestTree
-tcase nm = testCase nm . assertSucceeds --assertBool "Parses" . parseSucceeds
+tcase nm = testCase nm . assertSucceeds
 
 isRight :: Either a b -> Bool
 isRight (Right _) = True
@@ -51,3 +53,7 @@ helloWorld = "def helloWorld() = { print \"Hello World\"  }"
 
 multiLine :: Text
 multiLine = "def foo() = {\n val a : Int = 0\n val b : Int = 1\n add a b\n }"
+
+-- TODO: Operators
+square :: Text
+square = "def square(a: Int) = mul a a"

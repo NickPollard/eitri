@@ -36,7 +36,9 @@ instance GenCpp Statement where
   genCpp (FunDef name args block) = auto <> genCpp name <> "(" <> genArgs args <> ")" <> " = " <> genBlock block
 
 genBlock :: [Statement] -> Cpp
-genBlock ss = "{\n" <> intercalate "\n" (fmap genCpp ss) <> "\n}"
+genBlock ss = "{\n" <> intercalate "\n" (returnLast $ fmap genCpp ss) <> "\n}"
+  where returnLast (reverse -> (x:xs)) = reverse $ ("return " <> x):xs
+        returnLast [] = []
 
 genArgs :: [VarName :- Type] -> Cpp
 genArgs args = intercalate ", " $ genArg <$> args
